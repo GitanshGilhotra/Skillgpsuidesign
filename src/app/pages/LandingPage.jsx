@@ -1,144 +1,163 @@
-﻿import { Link } from 'react-router';
-import { motion } from 'motion/react';
-import { 
-  ArrowRight, 
-  Target, 
-  Brain, 
-  TrendingUp, 
-  Sparkles, 
+﻿import { Link } from "react-router-dom";
+import { motion } from "motion/react";
+import {
+  ArrowRight,
+  Target,
+  Brain,
+  TrendingUp,
+  Sparkles,
   Zap,
   Globe,
   GitBranch,
   Award,
-  ChevronRight
-} from 'lucide-react';
+} from "lucide-react";
 
 export default function LandingPage() {
   return (
-    
-      {/* Navigation */}
+    <div className="min-h-screen bg-white">
+      {/* Navbar */}
+      <nav className="flex justify-between items-center px-6 py-4 border-b">
+        <h1 className="font-bold text-lg">SkillGPS</h1>
 
-              SkillGPS
+        <div className="flex gap-4">
+          <Link to="/login" className="text-gray-600">
+            Sign In
+          </Link>
 
-              Sign In
+          <Link
+            to="/app/dashboard"
+            className="bg-black text-white px-4 py-2 rounded"
+          >
+            Get Started
+          </Link>
+        </div>
+      </nav>
 
-              Get Started
+      {/* Hero */}
+      <section className="px-6 py-20 text-center max-w-4xl mx-auto">
+        <p className="text-blue-600 flex justify-center items-center gap-1">
+          <Sparkles className="w-4" />
+          AI Powered Career Navigation
+        </p>
 
-      {/* Hero Section */}
+        <h1 className="text-4xl font-bold mt-4">
+          Navigate Your Career with AI
+        </h1>
 
-              AI-Powered Career Navigation
+        <p className="text-gray-500 mt-4">
+          Like Google Maps for your skills. Analyze resume, detect gaps and
+          get AI-powered roadmaps.
+        </p>
 
-              Navigate Your Career with AI
+        <div className="flex justify-center gap-4 mt-6">
+          <Link
+            to="/app/dashboard"
+            className="bg-black text-white px-6 py-3 rounded flex items-center gap-2"
+          >
+            Start Journey <ArrowRight className="w-4" />
+          </Link>
 
-              Like Google Maps for your skills. Analyze your resume, detect skill gaps, and get AI-powered roadmaps to reach your career goals faster.
+          <button className="border px-6 py-3 rounded">
+            Watch Demo
+          </button>
+        </div>
+      </section>
 
-                Start Your Journey
+      {/* Features */}
+      <section className="px-6 py-12 grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+        {features.map((f, i) => {
+          const Icon = f.icon;
+          return (
+            <motion.div
+              key={i}
+              whileHover={{ scale: 1.05 }}
+              className="border rounded-lg p-6"
+            >
+              <Icon className="text-blue-600 mb-3" />
+              <h3 className="font-semibold">{f.title}</h3>
+              <p className="text-sm text-gray-500">{f.description}</p>
+            </motion.div>
+          );
+        })}
+      </section>
 
-                Watch Demo
+      {/* Stats */}
+      <section className="bg-gray-50 py-10">
+        <div className="grid md:grid-cols-4 gap-6 max-w-5xl mx-auto text-center">
+          {stats.map((s, i) => (
+            <div key={i}>
+              <h2 className="text-2xl font-bold">{s.value}</h2>
+              <p className="text-gray-500">{s.label}</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
-          {/* Feature Cards Grid */}
-          
-            {features.map((feature, index) => (
+      {/* Steps */}
+      <section className="px-6 py-12 max-w-5xl mx-auto">
+        <h2 className="text-center text-2xl font-bold mb-8">
+          How It Works
+        </h2>
 
-                {feature.title}
-                {feature.description}
-              
-            ))}
-
-      {/* Stats Section */}
-
-              {stats.map((stat, index) => (
-
-                    {stat.value}
-                  
-                  {stat.label}
-                
-              ))}
-
-      {/* How It Works Section */}
-
-              How It Works
-
-              Get AI-powered career guidance in three simple steps
-
-            {steps.map((step, index) => (
-
-                    {index + 1}
-
-                  {step.title}
+        <div className="grid md:grid-cols-3 gap-6">
+          {steps.map((step, i) => {
+            const Icon = step.icon;
+            return (
+              <div key={i} className="border rounded-lg p-6 text-center">
+                <div className="w-10 h-10 bg-blue-600 text-white flex items-center justify-center rounded-full mx-auto mb-3">
+                  {i + 1}
+                </div>
+                <Icon className="mx-auto mb-3 text-blue-600" />
+                <h3 className="font-semibold">{step.title}</h3>
+                <p className="text-sm text-gray-500">
                   {step.description}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      </section>
 
-            ))}
+      {/* CTA */}
+      <section className="bg-black text-white text-center py-16">
+        <h2 className="text-2xl font-bold">
+          Ready to Navigate Your Career?
+        </h2>
 
-      {/* CTA Section */}
-
-              Ready to Navigate Your Career?
-
-              Join thousands of professionals using AI to accelerate their career growth
-
-              Get Started Now
+        <Link
+          to="/app/dashboard"
+          className="inline-flex items-center gap-2 bg-white text-black px-6 py-3 rounded mt-4"
+        >
+          Get Started <ArrowRight />
+        </Link>
+      </section>
 
       {/* Footer */}
-
-          © 2026 SkillGPS. All rights reserved.
-
+      <footer className="text-center py-6 text-gray-500 text-sm">
+        © 2026 SkillGPS. All rights reserved.
+      </footer>
+    </div>
   );
 }
 
 const features = [
-  {
-    icon,
-    title: "AI Skill Analysis",
-    description: "Upload your resume and let AI analyze your skills, experience, and career trajectory in seconds."
-  },
-  {
-    icon,
-    title: "Gap Detection",
-    description: "Identify missing skills based on real-time market demand and your career goals."
-  },
-  {
-    icon,
-    title: "Smart Roadmaps",
-    description: "Get personalized learning paths that update weekly based on industry trends."
-  },
-  {
-    icon,
-    title: "Market Insights",
-    description: "Access real-time data on trending skills, salaries, and job opportunities."
-  },
-  {
-    icon,
-    title: "Career Simulation",
-    description: "See how learning new skills impacts your salary and career opportunities."
-  },
-  {
-    icon,
-    title: "Job Readiness",
-    description: "Track your progress and get a real-time score on your job market readiness."
-  }
+  { icon: Brain, title: "AI Skill Analysis", description: "Analyze resume instantly." },
+  { icon: Target, title: "Gap Detection", description: "Find missing skills." },
+  { icon: TrendingUp, title: "Smart Roadmaps", description: "Personalized learning." },
+  { icon: Globe, title: "Market Insights", description: "Real-time data." },
+  { icon: GitBranch, title: "Career Simulation", description: "Predict salary." },
+  { icon: Award, title: "Job Readiness", description: "Track progress." },
 ];
 
 const stats = [
-  { value: "50K+", label: "Active Users" },
-  { value: "95%", label: "Success Rate" },
-  { value: "1M+", label: "Skills Analyzed" },
-  { value: "4.9/5", label: "User Rating" }
+  { value: "50K+", label: "Users" },
+  { value: "95%", label: "Success" },
+  { value: "1M+", label: "Skills" },
+  { value: "4.9/5", label: "Rating" },
 ];
 
 const steps = [
-  {
-    icon,
-    title: "Upload & Connect",
-    description: "Upload your resume and connect your GitHub and LinkedIn profiles"
-  },
-  {
-    icon,
-    title: "AI Analysis",
-    description: "Our AI analyzes your skills, experience, and identifies gaps"
-  },
-  {
-    icon,
-    title: "Get Your Roadmap",
-    description: "Receive a personalized learning roadmap with curated resources"
-  }
+  { icon: Target, title: "Upload", description: "Upload resume." },
+  { icon: Brain, title: "Analyze", description: "AI detects gaps." },
+  { icon: Zap, title: "Roadmap", description: "Get career plan." },
 ];

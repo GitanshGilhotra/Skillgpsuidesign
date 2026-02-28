@@ -1,184 +1,139 @@
-﻿import { useState } from 'react';
-import { motion } from 'motion/react';
-import { Link } from 'react-router';
-import { 
-  Target,
+﻿import { useState } from "react";
+import { motion } from "motion/react";
+import { Link } from "react-router-dom";
+import {
   Calendar,
   Clock,
   CheckCircle2,
   Circle,
   Play,
-  Pause,
   ChevronRight,
-  Plus,
-  MoreHorizontal,
-  Sparkles
-} from 'lucide-react';
+  Sparkles,
+} from "lucide-react";
 
-const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const weeklyPlan = {
   Mon: [
-    { time: '9:00 AM', task: 'TypeScript Advanced Types', duration: '2h', status: 'completed', category: 'learning' },
-    { time: '2:00 PM', task: 'Practice System Design', duration: '1.5h', status: 'completed', category: 'practice' }
+    { time: "9:00 AM", task: "TypeScript Advanced Types", duration: "2h", status: "completed", category: "learning" },
+    { time: "2:00 PM", task: "Practice System Design", duration: "1.5h", status: "completed", category: "practice" },
   ],
   Tue: [
-    { time: '9:00 AM', task: 'AWS Lambda Deep Dive', duration: '2h', status: 'completed', category: 'learning' },
-    { time: '3:00 PM', task: 'Build Serverless API', duration: '2h', status: 'in-progress', category: 'project' }
+    { time: "9:00 AM", task: "AWS Lambda Deep Dive", duration: "2h", status: "completed", category: "learning" },
+    { time: "3:00 PM", task: "Build Serverless API", duration: "2h", status: "in-progress", category: "project" },
   ],
-  Wed: [
-    { time: '10:00 AM', task: 'GraphQL Schema Design', duration: '1.5h', status: 'pending', category: 'learning' },
-    { time: '2:00 PM', task: 'Code Review Practice', duration: '1h', status: 'pending', category: 'practice' }
-  ],
-  Thu: [
-    { time: '9:00 AM', task: 'Docker Containers Workshop', duration: '2h', status: 'pending', category: 'learning' },
-    { time: '1:00 PM', task: 'Deploy to AWS', duration: '1.5h', status: 'pending', category: 'project' }
-  ],
-  Fri: [
-    { time: '10:00 AM', task: 'Testing Best Practices', duration: '1.5h', status: 'pending', category: 'learning' },
-    { time: '3:00 PM', task: 'Weekend Project Planning', duration: '1h', status: 'pending', category: 'planning' }
-  ],
-  Sat: [
-    { time: '10:00 AM', task: 'Build Portfolio Project', duration: '3h', status: 'pending', category: 'project' }
-  ],
-  Sun: [
-    { time: '11:00 AM', task: 'Weekly Review & Planning', duration: '1h', status: 'pending', category: 'planning' }
-  ]
 };
 
 export default function AIWeeklyPlannerPage() {
-  const [selectedDay, setSelectedDay] = useState('Tue');
-  const currentTasks = weeklyPlan[selectedDay typeof weeklyPlan] || [];
+  const [selectedDay, setSelectedDay] = useState("Tue");
+  const currentTasks = weeklyPlan[selectedDay] || [];
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'completed': return 'text-green-600 bg-green-50 border-green-200';
-      case 'in-progress': return 'text-blue-600 bg-blue-50 border-blue-200';
-      default: return 'text-gray-600 bg-gray-50 border-gray-200';
-    }
-  };
-
-  const getCategoryColor = (category) => {
-    switch (category) {
-      case 'learning': return 'bg-blue-100 text-blue-700';
-      case 'practice': return 'bg-purple-100 text-purple-700';
-      case 'project': return 'bg-green-100 text-green-700';
-      case 'planning': return 'bg-orange-100 text-orange-700';
-      default: return 'bg-gray-100 text-gray-700';
-    }
+  const getStatusIcon = (status) => {
+    if (status === "completed") return <CheckCircle2 className="text-green-600" />;
+    if (status === "in-progress") return <Play className="text-blue-600" />;
+    return <Circle className="text-gray-400" />;
   };
 
   return (
-    
+    <div className="p-6 space-y-8">
       {/* Header */}
+      <div className="flex justify-between items-center">
+        <div>
+          <p className="text-sm text-blue-600 flex items-center gap-1">
+            <Sparkles className="h-4 w-4" /> AI Generated
+          </p>
+          <h1 className="text-2xl font-bold">Weekly Planner</h1>
+          <p className="text-gray-500">
+            Personalized schedule for skill development.
+          </p>
+        </div>
+      </div>
 
-              AI-Generated Plan
-            
-            Weekly Learning Planner
-            Your personalized weekly schedule optimized for skill development
-
-            Add Task
-
-      {/* Weekly Stats */}
-
-            Completed
-          
-          5 / 15
-          Tasks this week
-
-            Planned Hours
-          
-          22.5h
-          This week
-
-            Focus Areas
-          
-          4
-          Key skills
-
-            In Progress
-          
-          1
-          Active task
-
-      {/* Day Selector */}
-      
+      {/* Day selector */}
+      <div className="flex gap-3 overflow-x-auto">
         {weekDays.map((day) => {
-          const dayTasks = weeklyPlan[day typeof weeklyPlan] || [];
-          const completedCount = dayTasks.filter(t => t.status === 'completed').length;
-          const totalCount = dayTasks.length;
-          
+          const dayTasks = weeklyPlan[day] || [];
+          const completed = dayTasks.filter((t) => t.status === "completed").length;
+
           return (
-             setSelectedDay(day)}
-              className={`flex-shrink-0 px-6 py-4 rounded-lg border transition-all ${
+            <button
+              key={day}
+              onClick={() => setSelectedDay(day)}
+              className={`px-5 py-3 rounded-lg border ${
                 selectedDay === day
-                  ? 'bg-gray-900 text-white border-gray-900'
-                  : 'bg-white text-gray-700 border-gray-200 hover:border-gray-900'
+                  ? "bg-black text-white"
+                  : "bg-white text-gray-700"
               }`}
             >
-              
-                {day}
-                
-                  {completedCount}/{totalCount} done
-
+              <div className="font-medium">{day}</div>
+              <div className="text-xs">{completed}/{dayTasks.length} done</div>
+            </button>
           );
         })}
+      </div>
 
-      {/* Task List for Selected Day */}
+      {/* Tasks */}
+      <div className="space-y-4">
+        <h2 className="font-semibold">{selectedDay} Schedule</h2>
 
-          {selectedDay}'s Schedule
-          
-            {currentTasks.reduce((sum, task) => {
-              const hours = parseFloat(task.duration.replace('h', ''));
-              return sum + hours;
-            }, 0)}h total
+        {currentTasks.length ? (
+          currentTasks.map((task, i) => (
+            <motion.div
+              key={i}
+              whileHover={{ scale: 1.02 }}
+              className="p-4 border rounded-lg bg-white flex justify-between"
+            >
+              <div className="flex gap-3">
+                {getStatusIcon(task.status)}
 
-          {currentTasks.length > 0 ? (
-            currentTasks.map((task, index) => (
+                <div>
+                  <h3 className="font-medium">{task.task}</h3>
+                  <div className="text-sm text-gray-500 flex gap-3">
+                    <span className="flex items-center gap-1">
+                      <Clock className="h-3 w-3" /> {task.time}
+                    </span>
+                    <span>{task.duration}</span>
+                  </div>
+                </div>
+              </div>
 
-                    {/* Status Icon */}
-                    
-                      {task.status === 'completed' ? (
+              <span className="text-sm text-blue-600 capitalize">
+                {task.category}
+              </span>
+            </motion.div>
+          ))
+        ) : (
+          <div className="text-center text-gray-500">
+            No tasks scheduled.
+          </div>
+        )}
+      </div>
 
-                      ) : task.status === 'in-progress' ? (
+      {/* Quick actions */}
+      <div className="grid md:grid-cols-2 gap-4">
+        <Link
+          to="/app/progress-analytics"
+          className="p-5 border rounded-lg bg-white hover:border-black flex justify-between"
+        >
+          <div>
+            <h3 className="font-medium">Track Progress</h3>
+            <p className="text-sm text-gray-500">
+              View analytics and insights.
+            </p>
+          </div>
+          <ChevronRight />
+        </Link>
 
-                      ) : (
-
-                      )}
-
-                    {/* Task Details */}
-
-                        {task.task}
-                        
-                          {task.category}
-
-                          {task.time}
-                        
-                        Duration: {task.duration}
-
-                  {/* Action Button */}
-
-            ))
-          ) : (
-
-              No tasks scheduled
-              Add tasks to plan your day
-            
-          )}
-
-      {/* Quick Actions */}
-
-          Need a different plan?
-          
-            Let AI regenerate your weekly schedule based on updated goals
-
-            Regenerate Plan
-
-          Track your progress
-          
-            View detailed analytics on your learning journey
-
-            View Analytics
-
+        <div className="p-5 border rounded-lg bg-white hover:border-black flex justify-between">
+          <div>
+            <h3 className="font-medium">Regenerate Plan</h3>
+            <p className="text-sm text-gray-500">
+              AI will create a new weekly schedule.
+            </p>
+          </div>
+          <ChevronRight />
+        </div>
+      </div>
+    </div>
   );
 }

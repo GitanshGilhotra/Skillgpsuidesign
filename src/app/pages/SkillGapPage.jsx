@@ -1,122 +1,167 @@
-﻿import { motion } from 'motion/react';
-import { Link } from 'react-router';
-import { 
-  TrendingUp, 
-  Target, 
+﻿import { motion } from "motion/react";
+import { Link } from "react-router-dom";
+import {
+  TrendingUp,
+  Target,
   AlertTriangle,
   ArrowRight,
-  Flame,
-  Award,
-  Clock,
-  Zap,
-  ChevronRight
-} from 'lucide-react';
-import { SkillGapChart } from '../components/SkillGapChart';
+} from "lucide-react";
+
+import { SkillGapChart } from "../components/SkillGapChart";
 
 export default function SkillGapPage() {
   const skillGaps = [
     {
-      skill: 'TypeScript',
+      skill: "TypeScript",
       current: 60,
       target: 90,
-      priority: 'high',
-      timeline: '2 months',
-      impact: 'High salary impact'
+      priority: "high",
+      timeline: "2 months",
+      impact: "High salary impact",
     },
     {
-      skill: 'System Design',
+      skill: "System Design",
       current: 45,
       target: 85,
-      priority: 'high',
-      timeline: '3 months',
-      impact: 'Senior role requirement'
+      priority: "high",
+      timeline: "3 months",
+      impact: "Senior role requirement",
     },
     {
-      skill: 'AWS Services',
+      skill: "AWS",
       current: 55,
       target: 80,
-      priority: 'medium',
-      timeline: '2 months',
-      impact: 'Cloud expertise'
+      priority: "medium",
+      timeline: "2 months",
+      impact: "Cloud expertise",
     },
-    {
-      skill: 'GraphQL',
-      current: 40,
-      target: 75,
-      priority: 'medium',
-      timeline: '1.5 months',
-      impact: 'Modern API development'
-    },
-    {
-      skill: 'Testing (Jest/RTL)',
-      current: 50,
-      target: 80,
-      priority: 'low',
-      timeline: '1 month',
-      impact: 'Code quality'
-    }
   ];
 
+  const getPriorityColor = (p) => {
+    switch (p) {
+      case "high":
+        return "bg-red-100 text-red-600";
+      case "medium":
+        return "bg-yellow-100 text-yellow-600";
+      default:
+        return "bg-gray-100 text-gray-600";
+    }
+  };
+
   return (
-    
+    <div className="p-6 space-y-8">
       {/* Header */}
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold">Skill Gap Analysis</h1>
+          <p className="text-gray-500">
+            Identify and close gaps in your skills.
+          </p>
+        </div>
 
-            Skill Gap Analysis
-            Identify and close the gaps between your current and target skill levels
+        <Link
+          to="/app/learning-navigator"
+          className="bg-black text-white px-4 py-2 rounded"
+        >
+          View Learning Path
+        </Link>
+      </div>
 
-            View Learning Path
+      {/* Stats */}
+      <div className="grid md:grid-cols-4 gap-4">
+        {[
+          { title: "Critical", value: "2", icon: AlertTriangle },
+          { title: "High", value: "2", icon: TrendingUp },
+          { title: "Timeline", value: "2 months", icon: Target },
+          { title: "Score", value: "92", icon: TrendingUp },
+        ].map((s, i) => {
+          const Icon = s.icon;
+          return (
+            <div key={i} className="border p-4 rounded bg-white">
+              <Icon className="text-blue-600" />
+              <h3 className="font-semibold">{s.value}</h3>
+              <p className="text-sm text-gray-500">{s.title}</p>
+            </div>
+          );
+        })}
+      </div>
 
-      {/* Stats Overview */}
+      {/* Chart */}
+      <div className="border p-4 rounded bg-white">
+        <SkillGapChart />
+      </div>
 
-            Critical Gaps
-          
-          2
+      {/* Detailed */}
+      <div>
+        <h2 className="font-semibold mb-4">Detailed Analysis</h2>
 
-            High Priority
-          
-          2
+        <div className="grid gap-4">
+          {skillGaps.map((gap, i) => (
+            <motion.div
+              key={i}
+              whileHover={{ scale: 1.02 }}
+              className="border rounded-lg p-4 bg-white"
+            >
+              <div className="flex justify-between items-center">
+                <div>
+                  <h3 className="font-medium">{gap.skill}</h3>
+                  <span
+                    className={`text-xs px-2 py-1 rounded ${getPriorityColor(
+                      gap.priority
+                    )}`}
+                  >
+                    {gap.priority}
+                  </span>
+                </div>
 
-            Avg. Timeline
-          
-          2 months
+                <Link
+                  to="/app/learning-resources"
+                  className="text-blue-600 flex items-center gap-1"
+                >
+                  Start <ArrowRight className="w-4" />
+                </Link>
+              </div>
 
-            Potential Score
-          
-          92/100
+              <p className="text-sm text-gray-500 mt-1">
+                {gap.impact}
+              </p>
 
-      {/* Skill Gap Chart */}
+              {/* Progress */}
+              <div className="mt-3">
+                <div className="flex justify-between text-sm">
+                  <span>Current {gap.current}%</span>
+                  <span>Target {gap.target}%</span>
+                </div>
 
-      {/* Detailed Skill Gaps */}
-      
-        Detailed Analysis
-        
-          {skillGaps.map((gap, index) => (
+                <div className="h-2 bg-gray-200 rounded mt-1">
+                  <div
+                    className="h-2 bg-blue-600 rounded"
+                    style={{ width: `${gap.current}%` }}
+                  />
+                </div>
 
-                    {gap.skill}
-                    
-                      {gap.priority} priority
-
-                  {gap.impact}
-
-                  Start Learning
-
-              {/* Progress Bar */}
-
-                  Current: {gap.current}%
-                  Target: {gap.target}%
-
-                    {gap.timeline}
-
-                    {gap.target - gap.current}% gap
-
+                <div className="flex justify-between text-xs mt-1 text-gray-500">
+                  <span>{gap.timeline}</span>
+                  <span>{gap.target - gap.current}% gap</span>
+                </div>
+              </div>
+            </motion.div>
           ))}
+        </div>
+      </div>
 
-      {/* CTA Section */}
-
-            Ready to close these gaps?
-            Get a personalized learning roadmap with curated resources
-
-            Generate Roadmap
-
+      {/* CTA */}
+      <div className="text-center border p-6 rounded bg-white">
+        <h3 className="font-semibold">
+          Ready to close these gaps?
+        </h3>
+        <Link
+          to="/app/learning-navigator"
+          className="inline-flex gap-2 bg-blue-600 text-white px-4 py-2 rounded mt-3"
+        >
+          Generate Roadmap <ArrowRight />
+        </Link>
+      </div>
+    </div>
   );
 }
