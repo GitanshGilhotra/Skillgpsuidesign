@@ -20,7 +20,11 @@ const PORT = process.env.PORT || 5000;
 const SECRET_KEY = process.env.JWT_SECRET || "super_secret_dummy_key_123";
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
-const PYTHON_API_URL = (process.env.PYTHON_API_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
+const DEFAULT_PYTHON_API_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://skillgpsuidesign-etwf.vercel.app"
+    : "http://127.0.0.1:8000";
+const PYTHON_API_URL = (process.env.PYTHON_API_URL || DEFAULT_PYTHON_API_URL).replace(/\/$/, "");
 const KNOWN_COMPROMISED_KEY = "REVOKED_PUBLIC_KEY_DO_NOT_USE";
 
 const genAI = GEMINI_API_KEY ? new GoogleGenerativeAI(GEMINI_API_KEY) : null;
@@ -133,20 +137,25 @@ const upload = multer({ storage: multer.memoryStorage() });
 app.use(cors());
 app.use(express.json());
 
-// File-backed User DB
-const dataDir = path.join(process.cwd(), "data");
+// File-backed User DB (Vercel filesystem is read-only except /tmp)
+const dataRoot = process.env.VERCEL ? "/tmp" : process.cwd();
+const dataDir = path.join(dataRoot, "data");
 const usersFilePath = path.join(dataDir, "users.json");
 
-if (!fs.existsSync(dataDir)) {
-  fs.mkdirSync(dataDir, { recursive: true });
-}
-
-if (!fs.existsSync(usersFilePath)) {
-  fs.writeFileSync(usersFilePath, "[]", "utf-8");
+try {
+  if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
+  }
+  if (!fs.existsSync(usersFilePath)) {
+    fs.writeFileSync(usersFilePath, "[]", "utf-8");
+  }
+} catch (error) {
+  console.error("Failed to initialize user data storage:", error.message);
 }
 
 const loadUsers = () => {
   try {
+    if (!fs.existsSync(usersFilePath)) return [];
     const fileData = fs.readFileSync(usersFilePath, "utf-8");
     const parsed = JSON.parse(fileData);
     return Array.isArray(parsed) ? parsed : [];
@@ -156,7 +165,11 @@ const loadUsers = () => {
 };
 
 const saveUsers = (users) => {
-  fs.writeFileSync(usersFilePath, JSON.stringify(users, null, 2), "utf-8");
+  try {
+    fs.writeFileSync(usersFilePath, JSON.stringify(users, null, 2), "utf-8");
+  } catch (error) {
+    console.error("Failed to persist users:", error.message);
+  }
 };
 
 const users = loadUsers();
@@ -879,7 +892,11 @@ app.post("/api/gemini/weekly-planner", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
+}
+
+export default app;
 

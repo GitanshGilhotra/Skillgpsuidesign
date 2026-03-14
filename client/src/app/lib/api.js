@@ -1,8 +1,16 @@
-export const API_BASE_URL = (import.meta.env.VITE_API_URL || "http://127.0.0.1:5000").replace(/\/$/, "");
+const isBrowser = typeof window !== "undefined";
+const isLocalHost = isBrowser && /^(localhost|127\.0\.0\.1)$/i.test(window.location.hostname);
+
+const defaultApiBase = isLocalHost
+  ? "http://127.0.0.1:5000"
+  : "https://skillgpsuidesign-5r88.vercel.app";
+
+export const API_BASE_URL = (import.meta.env.VITE_API_URL || defaultApiBase).replace(/\/$/, "");
 const API_FALLBACK_BASES = [
   API_BASE_URL,
   "http://127.0.0.1:5000",
   "http://localhost:5000",
+  "https://skillgpsuidesign-5r88.vercel.app",
 ];
 const UNIQUE_API_BASES = [...new Set(API_FALLBACK_BASES.map((u) => u.replace(/\/$/, "")))];
 

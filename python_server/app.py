@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import pandas as pd
+import os
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from pathlib import Path
@@ -26,8 +27,10 @@ def normalize_text(value):
 
 
 try:
-    data_path = Path(__file__).resolve().parent / "courses.csv"
-    df = pd.read_csv(data_path)
+    local_data_path = Path(__file__).resolve().parent / "courses.csv"
+    dataset_url = (os.getenv("COURSES_DATASET_URL") or "").strip()
+    dataset_source = dataset_url or str(local_data_path)
+    df = pd.read_csv(dataset_source)
     df["title"] = df["title"].fillna("")
     df["category"] = df["category"].fillna("")
     df["skills_covered"] = df["skills_covered"].fillna("")
@@ -35,6 +38,7 @@ try:
     df["search_text"] = (
         df["title"] + " " + df["category"] + " " + df["skills_covered"] + " " + df["difficulty"]
     ).apply(normalize_text)
+    print(f"Loaded courses dataset from: {dataset_source}")
 
     vectorizer = TfidfVectorizer(stop_words="english")
     course_vectors = vectorizer.fit_transform(df["search_text"])
